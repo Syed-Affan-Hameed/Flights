@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PassengerService } from '../api/services';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService, User } from '../auth/auth.service';
-import { Router } from '@angular/router';
+import { Router ,ActivatedRoute } from '@angular/router';
 import { FindFlight$Params } from '../api/fn/flight/find-flight';
 import { FindPassenger$Params } from '../api/fn/passenger/find-passenger';
 
@@ -13,8 +13,9 @@ import { FindPassenger$Params } from '../api/fn/passenger/find-passenger';
 })
 export class RegisterPassengerComponent implements OnInit {
 
-  constructor(private passengerService: PassengerService, private formbuilder: FormBuilder, private authService: AuthService, private router:Router) { }
+  constructor(private passengerService: PassengerService, private formbuilder: FormBuilder, private authService: AuthService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
+  requestedUrlFromFlightList?: string = undefined;
   PassengerRegistrationForm = this.formbuilder.group({
     email: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(100)])],
     firstName: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(35)])],
@@ -23,7 +24,8 @@ export class RegisterPassengerComponent implements OnInit {
   })
 
   ngOnInit(): void {
-   // throw new Error('Method not implemented.');
+    this.activatedRoute.params.subscribe(p => this.requestedUrlFromFlightList = p['requestedUrl'])
+
   }
   checkPassenger(): void {
 
@@ -52,7 +54,7 @@ export class RegisterPassengerComponent implements OnInit {
 
   private logIn = () => {
     this.authService.login({ email: this.PassengerRegistrationForm.get('email')?.value });
-    this.router.navigate(['/search-flights']);
+    this.router.navigate([this.requestedUrlFromFlightList ?? '/search-flights']);
   }
 
 }

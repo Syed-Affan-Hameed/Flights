@@ -2,6 +2,6 @@
 /* eslint-disable */
 export interface BookingDto {
   flightId?: string;
-  numberOfSeats?: number| null| undefined;
+  numberOfSeats?: number|null;
   passengerEmail?: string | null;
 }

@@ -25,10 +25,8 @@ export class BookFlightComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.authService.currentUser == undefined) {
 
-      this.router.navigate(['/register-passenger'])
-    }
+ 
 
     this.route.paramMap
       .subscribe(p => this.findFlightForUI(p.get("flightId")))
@@ -38,7 +36,7 @@ export class BookFlightComponent implements OnInit {
     this.flightId = flightId ?? 'not passed';
 
     this.flightService.findFlight({ id: this.flightId }).subscribe(
-      flight => this.flightDetailsFromAPIResponse = flight, this.handleError)
+      flight => this.flightDetailsFromAPIResponse = flight, error=> this.handleError(error))
 
 
   }
@@ -48,6 +46,11 @@ export class BookFlightComponent implements OnInit {
       alert("Flight not found!")
       this.router.navigate(['/search-flights'])
     }
+    if (err.status == 409) {
+     console.log("Conflict in the domain rule validation")
+      alert(JSON.parse(err.error).message);
+    }
+
 
     console.log("Response Error. Status: ", err.status)
     console.log("Response Error. Status Text: ", err.statusText)
